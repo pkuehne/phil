@@ -10,28 +10,13 @@ class Photo:
     BLOCK_SIZE = 65536
 
     def __init__(self, filepath: str):
-        self.init_photo_data(filepath)
-        self.init_meta_data()
-
-        self.setup_filename()
+        self.filepath = filepath
+        (self.path, self.filename) = path.split(self.filepath)
         self.hash = self.generate_hash()
 
-    def init_photo_data(self, filepath: str):
-        """ Loads information about the photo """
-        self.filepath = filepath
-        self.hash = ""
-        self.filename = ""
-        self.path = ""
-
-    def init_meta_data(self):
-        """ Loads the metadata for the photo """
         self.has_metadata = False
         self.date_taken = None
         self.description = ""
-
-    def setup_filename(self):
-        """ Splits the filepath into path and filename """
-        (self.path, self.filename) = path.split(self.filepath)
 
     def generate_hash(self):
         """ Generates a hash of the file contents """

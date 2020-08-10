@@ -15,11 +15,12 @@ class PhotoModel(QAbstractTableModel):
     class Columns(IntEnum):
         """ Enum for the Model columns """
 
-        HASH = 0
-        FILENAME = 1
-        PATH = 2
-        DATE_TAKEN = 3
-        DESCRIPTION = 4
+        FILENAME = 0
+        PATH = 1
+        FILEPATH = 2
+        HASH = 3
+        DATE_TAKEN = 4
+        DESCRIPTION = 5
 
     def __init__(self, photos: List[Photo] = None):
         super().__init__()
@@ -47,7 +48,11 @@ class PhotoModel(QAbstractTableModel):
 
     def data(self, index: QModelIndex, role=Qt.DisplayRole):
         """ Get individual for a row/column """
-        if not index.isValid() or role != Qt.DisplayRole:
+        if not index.isValid() or role not in [
+            Qt.DisplayRole,
+            Qt.ToolTipRole,
+            Qt.EditRole,
+        ]:
             return None
         photo = self.photos[index.row()]
 
@@ -55,6 +60,7 @@ class PhotoModel(QAbstractTableModel):
             self.Columns.HASH: photo.hash,
             self.Columns.FILENAME: photo.filename,
             self.Columns.PATH: photo.path,
+            self.Columns.FILEPATH: photo.filepath,
             self.Columns.DATE_TAKEN: photo.date_taken,
             self.Columns.DESCRIPTION: photo.description,
         }[index.column()]
@@ -68,7 +74,20 @@ class PhotoModel(QAbstractTableModel):
                 self.Columns.HASH: "Unique ID",
                 self.Columns.FILENAME: "Filename",
                 self.Columns.PATH: "Path",
+                self.Columns.FILEPATH: "File Path",
                 self.Columns.DATE_TAKEN: "Date Taken",
                 self.Columns.DESCRIPTION: "Description",
             }.get(section, "")
         return None
+
+    # def flags(self, index):  # pylint: disable= no-self-use
+    #     """ Returns the flags for the given index """
+    #     if not index.isValid():
+    #         return Qt.NoItemFlags
+    #     flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled
+    #     flags |= {
+    #         self.Columns.HASH: Qt.NoItemFlags,
+    #         self.Columns.FILENAME: Qt.NoItemFlags,
+    #         self.Columns.PATH: Qt.NoItemFlags,
+    #     }.get(index.column(), Qt.ItemIsEditable)
+    #     return flags

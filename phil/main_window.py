@@ -2,6 +2,7 @@
 
 from PyQt5.QtCore import QDirIterator, QDir
 from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QGuiApplication
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWidgets import QFileDialog
 from phil.list_screen import ListScreen
@@ -26,6 +27,7 @@ class MainWindow(QMainWindow):
         """ Basic window setup """
         self.setWindowIcon(QIcon(":/icons/phil.ico"))
         self.setWindowTitle("Phil - The Photo/Individual Linker")
+        self.resize(QGuiApplication.primaryScreen().availableSize() * 0.7)
 
         self.menu_bar = MenuBar(self)
         self.setMenuBar(self.menu_bar)
