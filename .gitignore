@@ -132,3 +132,4 @@ dmypy.json
 .vscode/
 resources.py
 cov_html/
+test_data/
