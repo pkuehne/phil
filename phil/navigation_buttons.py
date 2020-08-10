@@ -53,7 +53,6 @@ class NavigationButtons(QWidget):
     def row_changed(self, row: int):
         """ When the mapper has moved to a new row """
         row_count = self.mapper.model().rowCount()
-        print(f"{row} vs {row_count}")
         self.first.setEnabled(row != 0)
         self.back.setEnabled(row != 0)
         self.submit.setEnabled(row_count != 0)

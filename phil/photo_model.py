@@ -85,6 +85,7 @@ class PhotoModel(QAbstractTableModel):
             photo.description = value
 
         if prev != value:
+            self.photos[index.row()].write_metadata()
             self.dataChanged.emit(index, index)
         return True
 

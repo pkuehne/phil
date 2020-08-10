@@ -3,6 +3,7 @@
 import hashlib
 from os import path
 from datetime import date
+import yaml
 
 
 class Photo:
@@ -19,6 +20,8 @@ class Photo:
         self.date_taken: date = None
         self.description = ""
 
+        self.read_metadata()
+
     def generate_hash(self):
         """ Generates a hash of the file contents """
 
@@ -32,3 +35,27 @@ class Photo:
                 file_hash.update(block)
                 block = photo.read(self.BLOCK_SIZE)
         return file_hash.hexdigest()
+
+    def metadata_filepath(self):
+        """ Returns the path and name of the metadata file """
+        return path.join(self.path, path.splitext(self.filename)[0] + ".yml")
+
+    def write_metadata(self):
+        """ Writes the metadata to a yaml file """
+        with open(self.metadata_filepath(), "w") as file:
+            data = {}
+            data["description"] = self.description
+            data["date_taken"] = self.date_taken
+            yaml.dump(data, file)
+            print(f"Wrote {self.metadata_filepath()} with {data}")
+
+    def read_metadata(self):
+        """ Reads the metadata from the yaml file """
+        if not path.isfile(self.metadata_filepath()):
+            return
+        with open(self.metadata_filepath()) as file:
+            data = yaml.safe_load(file)
+            print(f"Data: {data}")
+            self.has_metadata = True
+            self.description = data.get("description", "")
+            self.date_taken = data.get("date_taken", None)
