@@ -1,5 +1,6 @@
 """ List of photos to work on """
 
+from PyQt5.QtCore import QItemSelectionModel
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QTableView
@@ -22,6 +23,7 @@ class ListScreen(QWidget):
         # self.photo_list.selectionModel().selectionChanged.connect(
         #     self.selection_changed
         # )
+        self.photo_list.hideColumn(PhotoModel.Columns.DATE_TAKEN)
         self.photo_list.hideColumn(PhotoModel.Columns.DESCRIPTION)
         self.photo_list.hideColumn(PhotoModel.Columns.FILEPATH)
 
@@ -33,6 +35,7 @@ class ListScreen(QWidget):
         self.photo_list.selectionModel().currentRowChanged.connect(
             self.detail_screen.mapper.setCurrentModelIndex
         )
+        self.detail_screen.mapper.currentIndexChanged.connect(self.update_selection)
 
         layout = QHBoxLayout()
         layout.addWidget(self.photo_list)
@@ -47,3 +50,11 @@ class ListScreen(QWidget):
         print(f"{index}")
         self.detail_screen.mapper.setRootIndex(index.parent())
         self.detail_screen.mapper.setCurrentModelIndex(index)
+
+    def update_selection(self, row: int):
+        """ Update the selection when the mapper moves """
+        index = self.data_context.photo_model.index(row, 0)
+        if not self.photo_list.selectionModel().isSelected(index):
+            self.photo_list.selectionModel().select(
+                index, QItemSelectionModel.ClearAndSelect
+            )

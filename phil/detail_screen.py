@@ -4,12 +4,14 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QFormLayout
 from PyQt5.QtWidgets import QLabel
-from PyQt5.QtWidgets import QLineEdit
+
+# from PyQt5.QtWidgets import QDateEdit
 from PyQt5.QtWidgets import QTextEdit
 from PyQt5.QtWidgets import QDataWidgetMapper
 from phil.data_context import DataContext
 from phil.photo_model import PhotoModel
 from phil.photo_viewer import PhotoViewer
+from phil.navigation_buttons import NavigationButtons
 
 
 class DetailScreen(QWidget):
@@ -26,26 +28,31 @@ class DetailScreen(QWidget):
         form = QFormLayout()
         self.filename = QLabel()
         form.addRow(QLabel("Filename:"), self.filename)
-        self.date_taken = QLineEdit()
-        form.addRow(QLabel("Date Taken:"), self.date_taken)
+        # self.date_taken = QDateEdit()
+        # form.addRow(QLabel("Date Taken:"), self.date_taken)
         self.description = QTextEdit()
         form.addRow(QLabel("Description"), self.description)
 
+        # button_layout = QHBoxLayout()
+        # first = QPushButton("First")
+        # first.pressed.connect(self.mapper.toFirst())
         layout.addLayout(form)
-        self.setLayout(layout)
 
         self.mapper = QDataWidgetMapper()
         self.mapper.setModel(self.data_context.photo_model)
         self.mapper.addMapping(self.filename, PhotoModel.Columns.FILENAME, b"text")
-        self.mapper.addMapping(self.date_taken, PhotoModel.Columns.DATE_TAKEN)
+        # self.mapper.addMapping(self.date_taken, PhotoModel.Columns.DATE_TAKEN)
         self.mapper.addMapping(
             self.description, PhotoModel.Columns.DESCRIPTION, b"plainText"
         )
 
         self.mapper.currentIndexChanged.connect(self.row_changed)
-        self.data_context.photo_model.dataChanged.connect(
-            lambda _, __: self.mapper.toFirst()
-        )
+        self.mapper.setSubmitPolicy(QDataWidgetMapper.ManualSubmit)
+        # self.data_context.photo_model.dataChanged.connect()
+
+        self.navigation_buttons = NavigationButtons(self.mapper)
+        layout.addWidget(self.navigation_buttons)
+        self.setLayout(layout)
 
     def row_changed(self, row: int):
         """ The selected photo has changed """

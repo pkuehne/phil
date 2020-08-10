@@ -2,6 +2,7 @@
 
 import hashlib
 from os import path
+from datetime import date
 
 
 class Photo:
@@ -15,7 +16,7 @@ class Photo:
         self.hash = self.generate_hash()
 
         self.has_metadata = False
-        self.date_taken = None
+        self.date_taken: date = None
         self.description = ""
 
     def generate_hash(self):
