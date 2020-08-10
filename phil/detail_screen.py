@@ -24,6 +24,7 @@ class DetailScreen(QWidget):
         super().__init__(parent)
 
         self.data_context = data_context
+        self.scale_factor = 1.0
         layout = QVBoxLayout()
 
         self.photo = QLabel()
@@ -41,9 +42,12 @@ class DetailScreen(QWidget):
         self.zoom_out = QPushButton("-")
         self.zoom_out.pressed.connect(lambda: self.scale_image(0.8))
         image_controls.addWidget(self.zoom_out)
-        self.zoom_zero = QPushButton("Reset")
+        self.zoom_zero = QPushButton("Original")
         self.zoom_zero.pressed.connect(self.reset_zoom)
         image_controls.addWidget(self.zoom_zero)
+        self.zoom_fit = QPushButton("Fit")
+        self.zoom_fit.pressed.connect(self.fit_image)
+        image_controls.addWidget(self.zoom_fit)
         self.zoom_in = QPushButton("+")
         self.zoom_in.pressed.connect(lambda: self.scale_image(1.25))
         image_controls.addWidget(self.zoom_in)
@@ -86,7 +90,7 @@ class DetailScreen(QWidget):
             print("Couldn't load image")
             return
         self.photo.setPixmap(QPixmap.fromImage(image))
-        self.reset_zoom()
+        self.fit_image()
 
     def scale_image(self, factor: float):
         """ Scale the image by the factor """
@@ -103,6 +107,12 @@ class DetailScreen(QWidget):
         self.photo.adjustSize()
         self.scale_factor = 1.0
         self.update_zoom_label()
+
+    def fit_image(self):
+        """ Fit the image to the available space """
+        factor = self.scroll_area.height() / self.photo.pixmap().height()
+        self.scale_factor = 1.0
+        self.scale_image(factor)
 
     def update_zoom_label(self):
         """ Update the label of the zoom value """
