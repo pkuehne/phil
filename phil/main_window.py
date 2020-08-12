@@ -3,8 +3,10 @@
 from PyQt5.QtCore import QDirIterator, QDir
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QGuiApplication
+from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QProgressDialog
 from phil.list_screen import ListScreen
 from phil.menu_bar import MenuBar
 from phil.photo_model import Photo
@@ -49,7 +51,26 @@ class MainWindow(QMainWindow):
         iterator = QDirIterator(
             folder_name, extensions, QDir.Files, QDirIterator.Subdirectories
         )
-        photos = []
+        filenames = []
         while iterator.hasNext():
-            photos.append(Photo(iterator.next()))
+            filenames.append(iterator.next())
+
+        photos = []
+        progress = 0
+        loading_screen = QProgressDialog(
+            "Loading photos", "Cancel", 0, len(filenames), self
+        )
+        loading_screen.setWindowTitle("Phil")
+        loading_screen.setMinimumDuration(1000)
+        for filename in filenames:
+            loading_screen.setValue(progress)
+            QApplication.processEvents()
+            if loading_screen.wasCanceled():
+                photos = []
+                break
+
+            photos.append(Photo(filename))
+            progress += 1
+        loading_screen.setValue(len(filenames))
+
         self.data_context.photo_model.update_photo_list(photos)
