@@ -48,6 +48,7 @@ class PhotoViewer(QWidget):
         self.reset_zoom()
         layout.addLayout(image_controls)
 
+        layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
 
     def load_image(self, filepath: str):

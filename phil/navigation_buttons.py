@@ -45,10 +45,11 @@ class NavigationButtons(QWidget):
         self.last.pressed.connect(self.mapper.toLast)
         layout.addWidget(self.last)
 
-        self.setLayout(layout)
-
         self.mapper.currentIndexChanged.connect(self.row_changed)
         self.row_changed(0)
+
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(layout)
 
     def row_changed(self, row: int):
         """ When the mapper has moved to a new row """

@@ -22,6 +22,7 @@ class PhotoModel(QAbstractTableModel):
         HASH = 3
         DATE_TAKEN = 4
         DESCRIPTION = 5
+        PERSONS = 6
 
     def __init__(self, photos: List[Photo] = None):
         super().__init__()
@@ -58,13 +59,35 @@ class PhotoModel(QAbstractTableModel):
         photo = self.photos[index.row()]
 
         return {
+            Qt.DisplayRole: self.data_display,
+            Qt.ToolTipRole: self.data_display,
+            Qt.EditRole: self.data_edit,
+        }[role](photo, index.column())
+
+    def data_display(self, photo: Photo, column: int):
+        """ Get the data for a photo field """
+        links = len(photo.persons)
+        return {
             self.Columns.HASH: photo.hash,
             self.Columns.FILENAME: photo.filename,
             self.Columns.PATH: photo.path,
             self.Columns.FILEPATH: photo.filepath,
             self.Columns.DATE_TAKEN: photo.date_taken if photo.date_taken else QDate(),
             self.Columns.DESCRIPTION: photo.description,
-        }[index.column()]
+            self.Columns.PERSONS: f"{links} Link{'s' if links != 1 else ''}",
+        }[column]
+
+    def data_edit(self, photo: Photo, column: int):
+        """ Get the edit representation for a photo field """
+        return {
+            self.Columns.HASH: photo.hash,
+            self.Columns.FILENAME: photo.filename,
+            self.Columns.PATH: photo.path,
+            self.Columns.FILEPATH: photo.filepath,
+            self.Columns.DATE_TAKEN: photo.date_taken if photo.date_taken else QDate(),
+            self.Columns.DESCRIPTION: photo.description,
+            self.Columns.PERSONS: photo.persons,
+        }[column]
 
     def setData(self, index, value, role=Qt.EditRole):  # pylint: disable=invalid-name
         """ Updates the nodes values based on an edit """
@@ -83,6 +106,9 @@ class PhotoModel(QAbstractTableModel):
         if index.column() == self.Columns.DESCRIPTION:
             prev = photo.description
             photo.description = value
+        if index.column() == self.Columns.PERSONS:
+            prev = photo.persons
+            photo.persons = value
 
         if prev != value:
             self.photos[index.row()].write_metadata()
@@ -101,6 +127,7 @@ class PhotoModel(QAbstractTableModel):
                 self.Columns.FILEPATH: "File Path",
                 self.Columns.DATE_TAKEN: "Date Taken",
                 self.Columns.DESCRIPTION: "Description",
+                self.Columns.PERSONS: "Linked People",
             }.get(section, "")
         return None
 

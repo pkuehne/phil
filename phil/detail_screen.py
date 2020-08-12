@@ -4,14 +4,14 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QFormLayout
 from PyQt5.QtWidgets import QLabel
-
-# from PyQt5.QtWidgets import QDateEdit
 from PyQt5.QtWidgets import QTextEdit
 from PyQt5.QtWidgets import QDataWidgetMapper
 from phil.data_context import DataContext
 from phil.photo_model import PhotoModel
 from phil.photo_viewer import PhotoViewer
 from phil.navigation_buttons import NavigationButtons
+from phil.person_linker import PersonLinker
+from phil.person_linker import LinkerDelegate
 
 
 class DetailScreen(QWidget):
@@ -31,20 +31,22 @@ class DetailScreen(QWidget):
         # self.date_taken = QDateEdit()
         # form.addRow(QLabel("Date Taken:"), self.date_taken)
         self.description = QTextEdit()
-        form.addRow(QLabel("Description"), self.description)
+        form.addRow(QLabel("Description:"), self.description)
 
-        # button_layout = QHBoxLayout()
-        # first = QPushButton("First")
-        # first.pressed.connect(self.mapper.toFirst())
+        self.linker = PersonLinker([], self)
+        form.addRow(QLabel("People:"), self.linker)
+
         layout.addLayout(form)
 
         self.mapper = QDataWidgetMapper()
         self.mapper.setModel(self.data_context.photo_model)
+        self.mapper.setItemDelegate(LinkerDelegate(self))
         self.mapper.addMapping(self.filename, PhotoModel.Columns.FILENAME, b"text")
         # self.mapper.addMapping(self.date_taken, PhotoModel.Columns.DATE_TAKEN)
         self.mapper.addMapping(
             self.description, PhotoModel.Columns.DESCRIPTION, b"plainText"
         )
+        self.mapper.addMapping(self.linker, PhotoModel.Columns.PERSONS)
 
         self.mapper.currentIndexChanged.connect(self.row_changed)
         self.mapper.setSubmitPolicy(QDataWidgetMapper.ManualSubmit)
