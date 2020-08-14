@@ -61,7 +61,6 @@ class PersonLinker(QWidget):
         self.add.pressed.connect(self.model.add_person)
         button_layout.addWidget(self.add)
         self.delete = QPushButton("Delete")
-        self.delete.pressed.connect(self.model.delete_person)
         button_layout.addWidget(self.delete)
         edit_layout.addLayout(button_layout)
         layout.addLayout(edit_layout)
@@ -71,6 +70,11 @@ class PersonLinker(QWidget):
         self.mapper.addMapping(self.name, PersonModel.Columns.NAME)
         self.person_list.selectionModel().currentRowChanged.connect(
             self.mapper.setCurrentModelIndex
+        )
+        self.delete.pressed.connect(
+            lambda: self.model.delete_person(
+                self.model.index(self.mapper.currentIndex(), 0)
+            )
         )
 
         layout.setContentsMargins(0, 0, 0, 0)
