@@ -3,8 +3,11 @@
 from PyQt5.QtCore import QItemSelectionModel
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QHBoxLayout
+from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QTableView
 from PyQt5.QtWidgets import QHeaderView
+from PyQt5.QtWidgets import QLineEdit
+from PyQt5.QtWidgets import QLabel
 from phil.data_context import DataContext
 from phil.photo_model import PhotoModel
 from phil.detail_screen import DetailScreen
@@ -17,6 +20,15 @@ class ListScreen(QWidget):
     def __init__(self, data_context: DataContext, parent=None):
         super().__init__(parent)
         self.data_context = data_context
+
+        list_layout = QVBoxLayout()
+
+        filter_layout = QHBoxLayout()
+        filter_layout.addWidget(QLabel("Person: "))
+        self.person_filter = QLineEdit()
+        filter_layout.addWidget(self.person_filter)
+        list_layout.addLayout(filter_layout)
+
         self.filter_model = FilterModel()
         self.filter_model.setSourceModel(self.data_context.photo_model)
         self.photo_list = QTableView()
@@ -26,11 +38,12 @@ class ListScreen(QWidget):
         self.photo_list.hideColumn(PhotoModel.Columns.DATE_TAKEN)
         self.photo_list.hideColumn(PhotoModel.Columns.DESCRIPTION)
         self.photo_list.hideColumn(PhotoModel.Columns.FILEPATH)
-
+        list_layout.addWidget(self.photo_list)
         self.photo_list.horizontalHeader().setSectionResizeMode(
             PhotoModel.Columns.FILENAME, QHeaderView.Stretch
         )
 
+        self.person_filter.textChanged.connect(self.filter_model.set_person_filter)
         self.detail_screen = DetailScreen(self.data_context)
         self.photo_list.selectionModel().currentRowChanged.connect(
             self.update_details_screen
@@ -38,7 +51,7 @@ class ListScreen(QWidget):
         self.detail_screen.mapper.currentIndexChanged.connect(self.update_selection)
 
         layout = QHBoxLayout()
-        layout.addWidget(self.photo_list)
+        layout.addLayout(list_layout)
         layout.addWidget(self.detail_screen)
         self.setLayout(layout)
 

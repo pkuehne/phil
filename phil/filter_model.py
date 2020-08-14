@@ -28,7 +28,7 @@ class FilterModel(QSortFilterProxyModel):
         persons = index.siblingAtColumn(PhotoModel.Columns.PERSONS).data(Qt.EditRole)
 
         for person in persons:
-            if person.name == self.person_filter:
+            if self.person_filter in person.name:
                 return True
         return False
 

@@ -54,6 +54,7 @@ class DetailScreen(QWidget):
 
         self.navigation_buttons = NavigationButtons(self.mapper)
         layout.addWidget(self.navigation_buttons)
+        layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
 
     def row_changed(self, row: int):
