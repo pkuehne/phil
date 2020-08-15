@@ -1,4 +1,4 @@
-name: Master Branch Validation
+name: Branch Validation
 
 on:
   push:
@@ -39,9 +39,6 @@ jobs:
       - name: Run unit tests
         run: |
           pytest --cov=phil --cov-report xml:cov.xml --cov-fail-under=70 tests
-      - name: Run workflow tests
-        run: |
-          pytest tests/workflow
       - name: Check for issues
         run: |
           pylint -E phil
