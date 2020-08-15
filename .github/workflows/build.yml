@@ -38,7 +38,7 @@ jobs:
           pip install -r requirements.txt
       - name: Run unit tests
         run: |
-          pytest --cov=phil --cov-report xml:cov.xml --cov-fail-under=90 tests
+          pytest --cov=phil --cov-report xml:cov.xml --cov-fail-under=70 tests
       - name: Run workflow tests
         run: |
           pytest tests/workflow
