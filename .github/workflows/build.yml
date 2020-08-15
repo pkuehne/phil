@@ -38,7 +38,7 @@ jobs:
           pip install -r requirements.txt
       - name: Run unit tests
         run: |
-          pytest --cov=phil --cov-report xml:cov.xml --cov-fail-under=90 tests/unit
+          pytest --cov=phil --cov-report xml:cov.xml --cov-fail-under=90 tests
       - name: Run workflow tests
         run: |
           pytest tests/workflow
@@ -60,11 +60,11 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         include:
           - os: ubuntu-latest
-            executable: phil-linux-amd64
+            executable: phil-linux
           - os: macos-latest
-            executable: phil-macos-amd64
+            executable: phil-macos
           - os: windows-latest
-            executable: phil-windows-amd64.exe
+            executable: phil-windows.exe
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }} on ${{ matrix.os }}
